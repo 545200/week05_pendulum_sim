@@ -53,8 +53,6 @@ GitHub 仓库链接：**https://github.com/545200/week05_pendulum_sim**
 
 远端同步状态：已成功 `push` 至 `origin/main`，本地 `main` 分支已跟踪远端。
 
-![GitHub 仓库已推送](screenshots/03-github-repo.png)
-
 ## 五、ReAct 闭环自愈实录（任务四证据链）
 
 1. **Action**：在交互基线版本（commit `637b655`）点击"重置摆动"按钮
