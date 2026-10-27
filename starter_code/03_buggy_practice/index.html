@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>【演练代码】单摆物理模拟器 (含未定义报错) - 任务四专用</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #1a1a24;
+      color: #e0e6ed;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    header {
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #f0f4f8;
+    }
+    .badge {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: rgba(244, 67, 54, 0.2);
+      color: #ef5350;
+      border: 1px solid rgba(244, 67, 54, 0.4);
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    canvas {
+      display: block;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      border-radius: 12px;
+      background: radial-gradient(circle at center, #222232 0%, #15151e 100%);
+    }
+    .control-panel {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 12px 24px;
+      background: rgba(30, 30, 42, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      max-width: 800px;
+      width: 100%;
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.82rem;
+    }
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      color: #90caf9;
+      font-weight: 500;
+    }
+    .val-display {
+      color: #fff;
+      font-family: monospace;
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 140px;
+      height: 6px;
+      border-radius: 3px;
+      background: #33334d;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #00e5ff;
+      cursor: pointer;
+      box-shadow: 0 0 8px #00e5ff;
+    }
+    .btn-reset {
+      background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+      color: #fff;
+      border: none;
+      padding: 8px 18px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(229, 57, 53, 0.4);
+      transition: all 0.2s ease;
+      align-self: center;
+    }
+    .btn-reset:hover {
+      background: linear-gradient(135deg, #ef5350 0%, #e53935 100%);
+      box-shadow: 0 4px 14px rgba(239, 83, 80, 0.6);
+      transform: translateY(-1px);
+    }
+    .tip-box {
+      margin-top: 8px;
+      font-size: 0.78rem;
+      color: #ffb74d;
+      background: rgba(255, 183, 77, 0.1);
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px dashed rgba(255, 183, 77, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>单摆物理模拟器 (演练代码)</h1>
+      <span class="badge">Task 04 演练专用：点击重置按钮将触发控制台报错</span>
+    </header>
+
+    <canvas id="canvas" width="800" height="440"></canvas>
+
+    <div class="control-panel">
+      <div class="control-group">
+        <div class="control-label">
+          <span>摆长 (Length):</span>
+          <span id="lenVal" class="val-display">200 px</span>
+        </div>
+        <input type="range" id="lenSlider" min="100" max="350" value="200" step="1">
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">
+          <span>重力 (Gravity):</span>
+          <span id="gravVal" class="val-display">9.8</span>
+        </div>
+        <input type="range" id="gravSlider" min="1.0" max="25.0" value="9.8" step="0.1">
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">
+          <span>空气阻尼 (Damping):</span>
+          <span id="dampVal" class="val-display">0.002</span>
+        </div>
+        <input type="range" id="dampSlider" min="0.000" max="0.010" value="0.002" step="0.0005">
+      </div>
+
+      <!-- 故意绑定的未定义函数 resetAnimation()，点击将精准触发 ReferenceError -->
+      <button id="resetBtn" class="btn-reset" onclick="resetAnimation()">重置摆动 (点击报错)</button>
+    </div>
+
+    <div class="tip-box">
+      👉 <b>实战提示</b>：请按 <b>F12</b> 打开控制台（Console），点击红色按钮触发报错，并将红字堆栈喂给 AI 体验自愈！
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const origin = { x: canvas.width / 2, y: 70 };
+    let length = 200;
+    let gravity = 9.8;
+    let damping = 0.002;
+
+    let angle = Math.PI / 4;
+    let angularVelocity = 0.0;
+    let angularAcceleration = 0.0;
+
+    let lastTime = performance.now();
+
+    const lenSlider = document.getElementById('lenSlider');
+    const gravSlider = document.getElementById('gravSlider');
+    const dampSlider = document.getElementById('dampSlider');
+    const lenVal = document.getElementById('lenVal');
+    const gravVal = document.getElementById('gravVal');
+    const dampVal = document.getElementById('dampVal');
+
+    lenSlider.addEventListener('input', (e) => {
+      length = parseFloat(e.target.value);
+      lenVal.textContent = length + ' px';
+    });
+
+    gravSlider.addEventListener('input', (e) => {
+      gravity = parseFloat(e.target.value);
+      gravVal.textContent = gravity.toFixed(1);
+    });
+
+    dampSlider.addEventListener('input', (e) => {
+      damping = parseFloat(e.target.value);
+      dampVal.textContent = damping.toFixed(4);
+    });
+
+    // 注意：这里函数名故意写成了 resetSimulationState，导致上面 onclick 调用的 resetAnimation 未定义！
+    function resetSimulationState() {
+      angle = Math.PI / 4;
+      angularVelocity = 0.0;
+      angularAcceleration = 0.0;
+    }
+
+    function updatePhysics(dt) {
+      const gScaled = gravity * 60;
+      angularAcceleration = (-1 * gScaled / length) * Math.sin(angle);
+      angularVelocity += angularAcceleration * dt;
+      angularVelocity *= Math.max(0, 1 - damping * 60 * dt);
+      angle += angularVelocity * dt;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const bobX = origin.x + length * Math.sin(angle);
+      const bobY = origin.y + length * Math.cos(angle);
+
+      ctx.beginPath();
+      ctx.arc(origin.x, origin.y, 6, 0, Math.PI * 2);
+      ctx.fillStyle = '#90caf9';
+      ctx.shadowColor = '#42a5f5';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(origin.x, origin.y);
+      ctx.lineTo(bobX, bobY);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.lineWidth = 2;
+      ctx.shadowBlur = 0;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(bobX, bobY, 18, 0, Math.PI * 2);
+      ctx.fillStyle = '#00e5ff';
+      ctx.shadowColor = '#00e5ff';
+      ctx.shadowBlur = 16;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(bobX - 4, bobY - 4, 5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.shadowBlur = 0;
+      ctx.fill();
+    }
+
+    function animate(currentTime) {
+      const dt = Math.min((currentTime - lastTime) / 1000, 0.05);
+      lastTime = currentTime;
+
+      updatePhysics(dt);
+      draw();
+
+      requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
