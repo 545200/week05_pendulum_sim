@@ -42,8 +42,6 @@ week05_pendulum_sim/
 │   └── 02-double-pendulum.png        # 双摆运行截图（木星 / 彩虹拖尾）
 ├── tools/
 │   └── acceptance_check.js           # 自动化验收脚本（CDP 驱动无头浏览器）
-└── starter_code/
-    └── 03_buggy_practice/index.html  # 任务四故障演练原始代码（未修改，留证）
 ```
 
 ## 四、Git 提交记录（5 次）
@@ -67,7 +65,7 @@ git push -u origin main
 
 ## 五、ReAct 闭环自愈实录（任务四证据链）
 
-1. **Action**：点击故障演练页 / 本项目交互基线版本的"重置摆动"按钮
+1. **Action**：在交互基线版本（commit `637b655`）点击"重置摆动"按钮
 2. **Observation（真实控制台红字，无头浏览器 CDP 捕获）**：
 
    ```text
