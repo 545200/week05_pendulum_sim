@@ -114,6 +114,13 @@
   .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(229, 57, 53, .45); }
   .btn:active { transform: translateY(0); }
 
+  .btn-pause {
+    background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+    box-shadow: 0 3px 12px rgba(30, 136, 229, .32);
+  }
+  .btn-pause:hover { box-shadow: 0 6px 18px rgba(30, 136, 229, .45); }
+  .btn-group { display: flex; gap: 8px; }
+
   .hint { font-size: .7rem; color: var(--dim); }
   @media (max-width: 940px) {
     .panel { gap: 12px; }
@@ -155,7 +162,10 @@
       <input type="range" id="dampSlider" min="0" max="0.01" step="0.0005" value="0.002">
     </div>
 
-    <button class="btn" id="resetBtn" type="button">重置摆动</button>
+    <div class="btn-group">
+      <button class="btn btn-pause" id="pauseBtn" type="button">暂停</button>
+      <button class="btn" id="resetBtn" type="button">重置摆动</button>
+    </div>
 
     <div class="divider"></div>
 
@@ -437,26 +447,27 @@
    *  5. 主循环
    * ============================================================ */
   let last = performance.now();
+  let paused = false;
 
   function loop(now) {
     const dt = Math.min((now - last) / 1000, 0.05);
     last = now;
 
-    // 重力平滑过渡（天体切换不生硬）
-    if (Math.abs(state.gravity - state.gravityTarget) > 1e-4) {
+    // 重力平滑过渡（天体切换不生硬）；暂停时一并冻结
+    if (!paused && Math.abs(state.gravity - state.gravityTarget) > 1e-4) {
       state.gravity += (state.gravityTarget - state.gravity) * Math.min(1, dt * 7);
-    } else {
+    } else if (!paused) {
       state.gravity = state.gravityTarget;
     }
 
-    if (state.drag === null) integrate(dt);
+    if (state.drag === null && !paused) integrate(dt);
 
-    // 记录双摆末端轨迹
-    if (state.mode === 'double') {
+    // 记录双摆末端轨迹（暂停时冻结尾迹，保持当前画面）
+    if (state.mode === 'double' && !paused) {
       const p = bobs()[1];
       state.trail.push({ x: p.x, y: p.y });
       if (state.trail.length > 80) state.trail.shift();
-    } else if (state.trail.length) {
+    } else if (state.mode !== 'double' && state.trail.length) {
       state.trail.length = 0;
     }
 
@@ -535,6 +546,14 @@
     resetState();
   }
   document.getElementById('resetBtn').addEventListener('click', resetSimulation);
+
+  // 暂停 / 继续：冻结物理积分，恢复时从暂停位置无缝继续
+  const pauseBtn = document.getElementById('pauseBtn');
+  pauseBtn.addEventListener('click', function () {
+    paused = !paused;
+    pauseBtn.textContent = paused ? '继续' : '暂停';
+    if (!paused) last = performance.now();   // 防止恢复后首帧 dt 突增
+  });
 
   // ---------- 拖拽摆球 ----------
   function toLogical(evt) {
@@ -649,6 +668,9 @@
     canvas.style.height = h + 'px';
   });
   requestAnimationFrame(loop);
+
+  // 调试句柄：供自动化验收脚本读取内部状态（不影响正常运行）
+  window.__sim = { state: state, isPaused: () => paused };
 })();
 </script>
 </body>
