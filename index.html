@@ -121,7 +121,7 @@
       <input type="range" id="dampSlider" min="0" max="0.01" step="0.0005" value="0.002">
     </div>
 
-    <button class="btn" id="resetBtn" onclick="resetAnimation()">重置摆动</button>
+    <button class="btn" id="resetBtn" type="button">重置摆动</button>
     <span class="hint">拖动滑块可实时改变物理参数</span>
   </div>
 
@@ -236,10 +236,17 @@
   });
 
   // ---------- 重置：回到 45° 静止初始态 ----------
+  // 修复说明：原代码通过 HTML 内联 onclick="resetAnimation()" 调用，
+  // 但该函数实际命名为 resetSimulationState 且声明在 IIFE 内部（不在全局作用域），
+  // 两处不一致导致点击时抛 ReferenceError。改为在 IIFE 内绑定事件监听，
+  // 名称与作用域同时对齐，不引入全局变量。
   function resetSimulationState() {
     theta = START_ANGLE;
     omega = 0;
+    last = performance.now();   // 重置时同步时间基准，避免下一帧 dt 突增
   }
+
+  document.getElementById('resetBtn').addEventListener('click', resetSimulationState);
 
   // ---------- 主循环 ----------
   let last = performance.now();
