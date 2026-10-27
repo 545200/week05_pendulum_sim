@@ -58,14 +58,9 @@ cd9f0b0 feat(week05): init pendulum experiment workspace
 
 > 完整历史可在项目目录执行 `git log --oneline` 查看。
 
-GitHub 仓库链接：`<推送后在此填写仓库地址>`
+GitHub 仓库链接：**https://github.com/545200/week05_pendulum_sim**
 
-推送命令（本地已完成全部提交，需在有 GitHub 凭据的终端执行）：
-
-```bash
-git remote add origin https://github.com/<用户名>/week05_pendulum_sim.git
-git push -u origin main
-```
+远端同步状态：已成功 `push` 至 `origin/main`，本地 `main` 分支已跟踪远端。
 
 ## 五、ReAct 闭环自愈实录（任务四证据链）
 
@@ -140,5 +135,5 @@ AI 把意图翻译成正确的语法与数学细节。人负责"做对的事"，
 - [x] 双击 `index.html` 可在浏览器中正常流畅运行
 - [x] F12 检查 Console 控制台 0 红色报错（自动化验收实测通过）
 - [x] README.md 已完整填写"人机协同三反思"
-- [ ] 已执行 `git push` 推送到 GitHub 个人作品集（**待办：需在有凭据的终端执行上文推送命令**）
+- [x] 已执行 `git push` 推送到 GitHub 个人作品集：https://github.com/545200/week05_pendulum_sim
 - [x] 已将仓库归档打包为标准 Zip 格式（`Week05_Lab_7112124044张仁红.zip`）
