@@ -2,15 +2,6 @@
 
 从结构化意图到可运行的交互世界 —— 单摆 / 双摆物理模拟器
 
-| 项目 | 内容 |
-| --- | --- |
-| 课程 | 人机协同程序设计 |
-| 实验者 | 张仁红 |
-| 学号 | 7112124044 |
-| 班级 | 信息管理与信息系统 242 班 |
-| 实验形式 | 个人独立上机实验（HOTL 模式） |
-| 交付物 | `index.html` 单文件应用 + 本反思报告 |
-
 ## 一、运行方式
 
 双击 `index.html` 即可在浏览器中运行，无需任何依赖、构建步骤或本地服务器。
@@ -39,7 +30,8 @@ week05_pendulum_sim/
 ├── README.md                         # 本报告：三反思 + 提交记录
 ├── screenshots/
 │   ├── 01-single-pendulum.png        # 单摆运行截图（地球 / 200px）
-│   └── 02-double-pendulum.png        # 双摆运行截图（木星 / 彩虹拖尾）
+│   ├── 02-double-pendulum.png        # 双摆运行截图（木星 / 彩虹拖尾）
+│   └── 03-github-repo.png            # GitHub 仓库推送成功截图
 ├── tools/
 │   └── acceptance_check.js           # 自动化验收脚本（CDP 驱动无头浏览器）
 ```
@@ -61,6 +53,8 @@ cd9f0b0 feat(week05): init pendulum experiment workspace
 GitHub 仓库链接：**https://github.com/545200/week05_pendulum_sim**
 
 远端同步状态：已成功 `push` 至 `origin/main`，本地 `main` 分支已跟踪远端。
+
+![GitHub 仓库已推送](screenshots/03-github-repo.png)
 
 ## 五、ReAct 闭环自愈实录（任务四证据链）
 
