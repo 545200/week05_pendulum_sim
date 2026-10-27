@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>单摆物理模拟器 · Week05</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a24;
+    color: #e0e6ed;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 24px;
+  }
+  h1 { font-size: 1.25rem; font-weight: 600; color: #f0f4f8; letter-spacing: .5px; }
+  .sub { font-size: .78rem; color: #7a869a; margin-top: 4px; }
+  canvas {
+    display: block;
+    border-radius: 14px;
+    background: radial-gradient(circle at 50% 20%, #232334 0%, #14141c 100%);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, .65);
+  }
+</style>
+</head>
+<body>
+  <header style="text-align:center">
+    <h1>单摆物理模拟器</h1>
+    <div class="sub">Week05 · 意图造物 MVP</div>
+  </header>
+
+  <canvas id="stage" width="900" height="480"></canvas>
+
+<script>
+(function () {
+  'use strict';
+
+  const canvas = document.getElementById('stage');
+  const ctx = canvas.getContext('2d');
+
+  // ---------- 物理参数（SI 单位，像素仅用于渲染） ----------
+  const PX_PER_M = 100;          // 100px = 1m，仅做绘图换算
+  const origin = { x: canvas.width / 2, y: 90 };
+
+  let lengthPx = 200;            // 摆长 200px
+  let gravity = 9.8;             // 重力加速度 9.8 m/s²
+
+  let theta = Math.PI / 4;       // 初始摆角 45°
+  let omega = 0;                 // 角速度 rad/s
+
+  // ---------- 物理积分：α = -(g/L)·sinθ ----------
+  function step(dt) {
+    const L = lengthPx / PX_PER_M;          // 摆长换算成米
+    const alpha = -(gravity / L) * Math.sin(theta);
+    omega += alpha * dt;
+    theta += omega * dt;
+  }
+
+  // ---------- 渲染 ----------
+  function draw() {
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const bobX = origin.x + lengthPx * Math.sin(theta);
+    const bobY = origin.y + lengthPx * Math.cos(theta);
+
+    // 悬点
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(origin.x, origin.y, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#90caf9';
+    ctx.shadowColor = '#42a5f5';
+    ctx.shadowBlur = 10;
+    ctx.fill();
+    ctx.restore();
+
+    // 摆线
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(origin.x, origin.y);
+    ctx.lineTo(bobX, bobY);
+    ctx.strokeStyle = 'rgba(255,255,255,.42)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
+
+    // 摆球（带微弱发光）
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(bobX, bobY, 18, 0, Math.PI * 2);
+    ctx.fillStyle = '#00e5ff';
+    ctx.shadowColor = '#00e5ff';
+    ctx.shadowBlur = 26;
+    ctx.fill();
+    ctx.restore();
+
+    // 高光
+    ctx.beginPath();
+    ctx.arc(bobX - 5, bobY - 5, 5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,.85)';
+    ctx.fill();
+  }
+
+  // ---------- 主循环：requestAnimationFrame ----------
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min((now - last) / 1000, 0.05);   // 限幅，防止切标签页后瞬移
+    last = now;
+
+    step(dt);
+    draw();
+
+    requestAnimationFrame(loop);
+  }
+
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
