@@ -44,15 +44,19 @@ week05_pendulum_sim/
 │   └── acceptance_check.js           # 自动化验收脚本（CDP 驱动无头浏览器）
 ```
 
-## 四、Git 提交记录（5 次）
+## 四、Git 提交记录（时间倒序）
 
 ```text
+01c0d9c chore: drop buggy practice stub from deliverable
+634aef1 docs: finalize README with HOTL reflections and acceptance report
 b944896 feat(advanced): double pendulum chaos sim + celestial presets + persistence
 6d694f9 fix: resolve reset button runtime error
 637b655 feat: add interactive parameter sliders
 9fbbcbe feat: complete pendulum MVP
 cd9f0b0 feat(week05): init pendulum experiment workspace
 ```
+
+> 完整历史可在项目目录执行 `git log --oneline` 查看。
 
 GitHub 仓库链接：`<推送后在此填写仓库地址>`
 
