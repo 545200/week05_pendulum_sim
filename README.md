@@ -30,8 +30,7 @@ week05_pendulum_sim/
 ├── README.md                         # 本报告：三反思 + 提交记录
 ├── screenshots/
 │   ├── 01-single-pendulum.png        # 单摆运行截图（地球 / 200px）
-│   ├── 02-double-pendulum.png        # 双摆运行截图（木星 / 彩虹拖尾）
-│   └── 03-github-repo.png            # GitHub 仓库推送成功截图
+│   └── 02-double-pendulum.png        # 双摆运行截图（木星 / 彩虹拖尾）
 ├── tools/
 │   └── acceptance_check.js           # 自动化验收脚本（CDP 驱动无头浏览器）
 ```
